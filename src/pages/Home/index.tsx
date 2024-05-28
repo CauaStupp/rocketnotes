@@ -5,8 +5,44 @@ import { Header } from "../../components/Header";
 import { Input } from "../../components/Input";
 import { Section } from "../../components/Section";
 import { Note } from "../../components/Note";
+import { useEffect, useState } from "react";
+import { api } from "../../services/api";
+
+
+
+interface TagsProps {
+  id: number;
+  name: string;
+  note_id: number;
+  user_id: number;
+}
+
+
 
 export const Home = () => {
+  const [tags, setTags] = useState<TagsProps[]>([]);
+  const [tagsSelected, setTagsSelected] = useState<string[]>([]);
+
+  function handleTagSelected(tagName: string) {
+    const isSelected = tagsSelected.includes(tagName);
+
+    if (isSelected) {
+      const filterTags = tagsSelected.filter(tag => tag !== tagName);
+      setTagsSelected(filterTags);
+    } else {
+      setTagsSelected(prev => [...prev, tagName]);
+    }  
+  }
+
+  useEffect(() => {
+    async function fetchTags() {
+      const response = await api.get("/tags");
+      setTags(response.data);
+    }
+
+    fetchTags();
+  }, [])
+
   return (
     <Container>
       <Brand>
@@ -17,14 +53,22 @@ export const Home = () => {
 
       <Menu>
         <li>
-          <ButtonText title="Todos" isactive />
+          <ButtonText 
+            title="Todos"
+            onClick={() => handleTagSelected("all")}
+            isactive={tagsSelected.length === 0}
+          />
         </li>
-        <li>
-          <ButtonText title="React" />
-        </li>
-        <li>
-          <ButtonText title="NodeJS" />
-        </li>
+        {tags && tags.map(tag => (
+          <li key={tag.id}>
+            <ButtonText 
+              title={tag.name}
+              onClick={() => handleTagSelected(tag.name)}
+              isactive={tagsSelected.includes(tag.name)}
+            />
+          </li>
+        ))}
+        
       </Menu>
 
       <Search>

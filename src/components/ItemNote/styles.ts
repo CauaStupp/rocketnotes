@@ -3,7 +3,7 @@ import { Theme } from "../../styles/theme";
 import { HTMLAttributes } from "react";
 
 interface CustomProps {
-  isNew: boolean;
+  $isnew: string;
   theme: Theme;
 }
 
@@ -13,10 +13,10 @@ export const Container = styled.div<NewProps>`
   display: flex;
   flex: 1;
   align-items: center;
-  background-color: ${({theme, isNew}) => isNew ? "transparent" : theme.COLORS.BACKGROUND_900};
+  background-color: ${({theme, $isnew}) => $isnew === "true" ? "transparent" : theme.COLORS.BACKGROUND_900};
   color: ${({theme}) => theme.COLORS.GRAY_300};
 
-  border: ${({theme, isNew}) => isNew ? `1px dashed ${theme.COLORS.GRAY_300}` : "none"};
+  border: ${({theme, $isnew}) => $isnew === "true" ? `1px dashed ${theme.COLORS.GRAY_300}` : "none"};
 
   margin-bottom: 0.8rem;
   border-radius: 1rem;
@@ -38,6 +38,7 @@ export const Container = styled.div<NewProps>`
   > input {
     height: 5.6rem;
     width: 100%;
+    min-width: 10rem;
     padding: 1.2rem;
     color: ${({theme}) => theme.COLORS.WHITE};
     background: transparent;
