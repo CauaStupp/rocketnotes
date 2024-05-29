@@ -66,7 +66,9 @@ export const NewNote = () => {
     })
 
     toast.success("Nota criada com sucesso!");
-    navigate(-1);
+    setTimeout(() => {
+      navigate(-1);
+    }, 2000);
   }
 
   return (

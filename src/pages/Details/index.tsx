@@ -7,6 +7,9 @@ import { Button } from "../../components/Button";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../../services/api";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import { Loading } from "../../components/Loading";
 
 interface LinksProps {
   id: number;
@@ -35,13 +38,24 @@ interface NotesProps {
 
 export const Details = () => {
   const [data, setData] = useState<NotesProps | null>(null);
+  const [loading, setLoading] = useState(false);
   const params = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchNote() {
-      const response = await api.get(`/notes/${params.id}`);
-      setData(response.data[0]);
+      try {
+        setLoading(true);
+        const response = await api.get(`/notes/${params.id}`);
+        setData(response.data[0]);
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          toast.error("Error: " + error.cause?.message);
+          throw new Error("Error: " + error.status);
+        }
+      } finally {
+        setLoading(false);
+      }
     }
 
     fetchNote();
@@ -56,6 +70,7 @@ export const Details = () => {
     const confirm = window.confirm("Deseja deletar essa nota?");
     
     if (confirm) {
+      toast.success("Nota deletada com sucesso!")
       await api.delete(`/notes/${params.id}`);
       navigate(-1)
     }
@@ -65,7 +80,7 @@ export const Details = () => {
     <Container>
       <Header />
 
-      {data && (
+      {data ? (
         <main>
           <Content className="fade">
             <ButtonText title="Excluir nota" onClick={handleRemove}/>
@@ -99,6 +114,10 @@ export const Details = () => {
             <Button title="Voltar" onClick={handleNavigate} />
           </Content>
         </main>
+      ) : (
+        <Content>
+          <Loading />
+        </Content>      
       )}
     </Container>
   );

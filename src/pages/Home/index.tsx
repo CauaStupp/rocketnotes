@@ -8,6 +8,7 @@ import { Note } from "../../components/Note";
 import { useEffect, useState } from "react";
 import { api } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import { Loading } from "../../components/Loading";
 
 interface TagsProps {
   id: number;
@@ -31,6 +32,7 @@ export const Home = () => {
   const [tagsSelected, setTagsSelected] = useState<string[]>([]);
   const [notes, setNotes] = useState<NotesProps[]>([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   function handleTagSelected(tagName: string) {
@@ -54,8 +56,17 @@ export const Home = () => {
 
   useEffect(() => {
     async function fetchTags() {
-      const response = await api.get("/tags");
-      setTags(response.data);
+      try {
+        setLoading(true);
+        const response = await api.get("/tags");
+        setTags(response.data);
+      } catch (error) {
+        console.log(error)
+        setTags([]);
+      } finally {
+        setLoading(false);
+      }
+      
     }
 
     fetchTags();
@@ -111,6 +122,7 @@ export const Home = () => {
 
       <Content className="fade">
         <Section title="Minhas notas">
+          {loading && <Loading/>}
           {notes.length !== 0 && notes ? (
             notes.map((note) => (
               <Note
@@ -120,8 +132,9 @@ export const Home = () => {
               />
             ))
           ) : (
-            <div>Nehuma nota registrada no momento!</div>
+            <div>Nenuhma nota registrada no momento</div>
           )}
+            
         </Section>
       </Content>
 

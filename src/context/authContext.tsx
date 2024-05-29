@@ -18,6 +18,7 @@ interface ValueProps {
   signIn: ({ email, password }: SignInProps) => Promise<Id | undefined>;
   signOut: () => void;
   updateProfile: (user: UserUpdateProps, avatar: File | null) => Promise<void>;
+  loading: boolean;
   user?: UserProps | null;
 }
 
@@ -53,6 +54,7 @@ export const useAuth = () => {
 
 export const AuthContextProvider = ({ children }: PropsWithChildren) => {
   const [data, setData] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("@rocketnotes:token");
@@ -70,6 +72,7 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
 
   async function updateProfile(user: UserUpdateProps, avatarFile?: File | null) {
     try {
+      setLoading(true)
       if (!data || !data.user) {
         throw new Error("Sem usuário cadastrado");
       }
@@ -99,9 +102,10 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
         toast.error(error.response.data.message);
       } else {
         console.log(error);
-
         toast.error("Não foi possível atualizar o perfil. Tente novamente");
       }
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -151,7 +155,7 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <AuthContext.Provider
-      value={{ signIn, signOut, updateProfile, user: data?.user }}>
+      value={{ signIn, signOut, updateProfile, loading, user: data?.user }}>
       {children}
     </AuthContext.Provider>
   );

@@ -5,19 +5,21 @@ import { Button } from "../../components/Button";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../../context/authContext";
-import UserImage from '../../assets/userprofiledefault.jpg';
+import UserImage from "../../assets/userprofiledefault.jpg";
 import { api } from "../../services/api";
-
+import { Loading } from "../../components/Loading";
 
 export const Profile = () => {
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, loading } = useAuth();
   const [name, setName] = useState(user ? user.name : "");
   const [email, setEmail] = useState(user ? user.email : "");
   const [password, setPassword] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const navigate = useNavigate();
 
-  const avatarUrl = user?.avatar ? `${api.defaults.baseURL}/files/${user.avatar}` : UserImage;
+  const avatarUrl = user?.avatar
+    ? `${api.defaults.baseURL}/files/${user.avatar}`
+    : UserImage;
 
   const [avatar, setAvatar] = useState<string>(avatarUrl);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -59,53 +61,57 @@ export const Profile = () => {
         </button>
       </header>
 
-      <Form className="fade">
-        <Avatar>
-          <img src={avatar} alt="Foto do usuário" />
+      {loading ? (
+        <Loading />
+      ) : (
+        <Form className="fade">
+          <Avatar>
+            <img src={avatar} alt="Foto do usuário" />
 
-          <label htmlFor="avatar">
-            <FiCamera />
+            <label htmlFor="avatar">
+              <FiCamera />
 
-            <input
-              id="avatar"
-              type="file"
-              name="avatar"
-              onChange={handleChangeImage}
-            />
-          </label>
-        </Avatar>
+              <input
+                id="avatar"
+                type="file"
+                name="avatar"
+                onChange={handleChangeImage}
+              />
+            </label>
+          </Avatar>
 
-        <Input
-          type="text"
-          placeholder="Nome"
-          icon={FiUser}
-          value={name}
-          onChange={({ target }) => setName(target.value)}
-        />
-        <Input
-          type="email"
-          placeholder="E-mail"
-          icon={FiMail}
-          value={email}
-          onChange={({ target }) => setEmail(target.value)}
-        />
-        <Input
-          type="password"
-          placeholder="Senha atual"
-          icon={FiLock}
-          value={password}
-          onChange={({ target }) => setPassword(target.value)}
-        />
-        <Input
-          type="password"
-          placeholder="Nova senha"
-          icon={FiLock}
-          value={oldPassword}
-          onChange={({ target }) => setOldPassword(target.value)}
-        />
+          <Input
+            type="text"
+            placeholder="Nome"
+            icon={FiUser}
+            value={name}
+            onChange={({ target }) => setName(target.value)}
+          />
+          <Input
+            type="email"
+            placeholder="E-mail"
+            icon={FiMail}
+            value={email}
+            onChange={({ target }) => setEmail(target.value)}
+          />
+          <Input
+            type="password"
+            placeholder="Senha atual"
+            icon={FiLock}
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+          />
+          <Input
+            type="password"
+            placeholder="Nova senha"
+            icon={FiLock}
+            value={oldPassword}
+            onChange={({ target }) => setOldPassword(target.value)}
+          />
 
-        <Button title="Salvar" onClick={handleUpdate} />
-      </Form>
+          <Button title="Salvar" onClick={handleUpdate} />
+        </Form>
+      )}
     </Container>
   );
 };
