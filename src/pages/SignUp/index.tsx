@@ -38,7 +38,7 @@ export const SignUp = () => {
 
   return (
     <Container>
-      <Form>
+      <Form className="fade">
         <h1>RocketNotes</h1>
         <p>Aplicação para salvar e gerenciar seus links úteis</p>
 

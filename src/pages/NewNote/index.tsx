@@ -5,10 +5,11 @@ import { InputArea } from "../../components/InputArea";
 import { Section } from "../../components/Section";
 import { ItemNote } from "../../components/ItemNote";
 import { Button } from "../../components/Button";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
 import { api } from "../../services/api";
 import { ToastContainer, toast } from "react-toastify";
+import { ButtonText } from "../../components/ButtonText";
 
 export const NewNote = () => {
   const [title, setTitle] = useState("")
@@ -44,6 +45,10 @@ export const NewNote = () => {
     setTags(prev => prev.filter(tag => tag !== deleted));
   }
 
+  function handleNavigation() {
+    navigate(-1);
+  }
+
   async function handleNewNote() {
     if (!title) {
       return toast.info("Preencha o título para salvar");
@@ -61,18 +66,18 @@ export const NewNote = () => {
     })
 
     toast.success("Nota criada com sucesso!");
-    navigate("/");
+    navigate(-1);
   }
 
   return (
     <Container>
       <Header />
 
-      <main>
+      <main className="fade">
         <Form>
           <header>
             <h1>Criar nota</h1>
-            <Link to="/">voltar</Link>
+            <ButtonText title="voltar" onClick={handleNavigation}/>
           </header>
 
           <Input 
@@ -97,7 +102,7 @@ export const NewNote = () => {
             ))}
             <ItemNote
               isNew
-              placeholder="Novo Link"
+              placeholder="Novo Link (exemplo: https://google.com)"
               value={newLink}
               onChange={({ target }) => setNewLink(target.value)}
               onClick={handleAddLink}

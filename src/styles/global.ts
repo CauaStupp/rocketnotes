@@ -69,4 +69,18 @@ export const GlobalStyle = createGlobalStyle`
   button:hover, a:hover {
     filter: brightness(0.9);
   }
+
+  
+  .fade {
+    opacity: 0;
+    scale: 0.9;
+    animation: fade 0.4s forwards;
+  }
+
+  @keyframes fade {
+    to {
+      opacity: 1;
+      scale: 1;
+    }
+  }
 `;

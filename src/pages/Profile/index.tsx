@@ -2,7 +2,7 @@ import { Container, Form, Avatar } from "./styles";
 import { FiArrowLeft, FiUser, FiLock, FiMail, FiCamera } from "react-icons/fi";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../../context/authContext";
 import UserImage from '../../assets/userprofiledefault.jpg';
@@ -15,6 +15,7 @@ export const Profile = () => {
   const [email, setEmail] = useState(user ? user.email : "");
   const [password, setPassword] = useState("");
   const [oldPassword, setOldPassword] = useState("");
+  const navigate = useNavigate();
 
   const avatarUrl = user?.avatar ? `${api.defaults.baseURL}/files/${user.avatar}` : UserImage;
 
@@ -46,15 +47,19 @@ export const Profile = () => {
     }
   }
 
+  function handleNavigation() {
+    navigate(-1);
+  }
+
   return (
     <Container>
       <header>
-        <Link to="/">
+        <button type="button" onClick={handleNavigation}>
           <FiArrowLeft />
-        </Link>
+        </button>
       </header>
 
-      <Form>
+      <Form className="fade">
         <Avatar>
           <img src={avatar} alt="Foto do usuário" />
 
