@@ -89,7 +89,7 @@ export const Details = () => {
 
             <p>{data.description}</p>
 
-            {data.links && (
+            {data.links && !loading && (
               <Section title="Links úteis">
                 <Links>
                   {data.links.map((link) => (
