@@ -13,11 +13,13 @@ export const SignUp = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
 
   async function handleSignUp() {
     try {
+      setLoading(true);
       if (!name || !email || !password) {
         return toast.error("Preencha todos os campos");
       }
@@ -33,6 +35,8 @@ export const SignUp = () => {
       if (error instanceof AxiosError && error.response) {
         toast.error(error.response.data.message)
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -65,7 +69,13 @@ export const SignUp = () => {
           onChange={({ target }) => setPassword(target.value)}
         />
 
-        <Button title="Cadastrar" onClick={handleSignUp} />
+        {loading ? (
+          <Button title="Cadastrando..." isLoading />
+        ) : (
+          <Button title="Cadastrar" onClick={handleSignUp} />
+        )}
+
+        
 
         <Link to="/">Voltar para login</Link>
       </Form>

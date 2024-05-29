@@ -114,6 +114,7 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
     password,
   }: SignInProps): Promise<Id | undefined> {
     try {
+      setLoading(true);
       if (!email || !password) {
         return toast.error("Preencha todos os campos!");
       }
@@ -144,6 +145,8 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
 
         toast.error("Não foi possível fazer Login. Tente novamente");
       }
+    } finally {
+      setLoading(false)
     }
   }
 

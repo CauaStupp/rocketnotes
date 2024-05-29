@@ -10,7 +10,8 @@ import { useAuth } from "../../context/authContext";
 export const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { signIn } = useAuth();
+
+  const { signIn, loading } = useAuth();
 
   function handleSignIn() {
     signIn({ email, password });
@@ -40,7 +41,12 @@ export const SignIn = () => {
           onChange={({ target }) => setPassword(target.value)}
         />
 
-        <Button title="Entrar" onClick={handleSignIn}/>
+        {loading ? (
+          <Button title="Entrando..." isLoading/>
+        ) : (
+          <Button title="Entrar" onClick={handleSignIn}/>
+        )}
+        
 
         <Link to="/register">Crie sua conta</Link>
       </Form>
