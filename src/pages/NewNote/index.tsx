@@ -57,6 +57,11 @@ export const NewNote = () => {
       if (!title) {
         return toast.info("Preencha o título para salvar");
       }
+
+      if (links.length === 0 || tags.length === 0) {
+        return toast.info("Adicione algum link ou tag")!
+      }
+
       if (newTag || newLink) {
         return toast.info("Você deixou algum link ou tag sem adicionar!");
       }

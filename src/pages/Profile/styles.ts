@@ -42,6 +42,7 @@ export const Avatar = styled.div`
     border-radius: 50%;
     width: 18.6rem;
     height: 18.6rem;
+    object-fit: cover;
   }
 
   > label {
