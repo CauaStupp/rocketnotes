@@ -52,13 +52,15 @@ export const SignUp = () => {
           placeholder="Nome"
           type="text"
           icon={FiUser}
+          value={name}
           onChange={({ target }) => setName(target.value)}
         />
 
         <Input
           placeholder="E-mail"
-          type="email"
+          type="text"
           icon={FiMail}
+          value={email}
           onChange={({ target }) => setEmail(target.value)}
         />
 
@@ -66,6 +68,7 @@ export const SignUp = () => {
           placeholder="Senha"
           type="password"
           icon={FiLock}
+          value={password}
           onChange={({ target }) => setPassword(target.value)}
         />
 

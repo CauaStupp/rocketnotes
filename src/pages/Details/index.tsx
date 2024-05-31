@@ -47,7 +47,8 @@ export const Details = () => {
       try {
         setLoading(true);
         const response = await api.get(`/notes/${params.id}`);
-        setData(response.data[0]);
+        setData(response.data);
+        console.log(response.data)
       } catch (error) {
         if (error instanceof AxiosError) {
           toast.error("Error: " + error.cause?.message);

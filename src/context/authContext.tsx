@@ -17,26 +17,30 @@ interface SignInProps {
 interface ValueProps {
   signIn: ({ email, password }: SignInProps) => Promise<Id | undefined>;
   signOut: () => void;
-  updateProfile: (user: UserUpdateProps, avatar: File | null) => Promise<void>;
+  updateProfile: ({user, avatarFile}: any) => Promise<void>;
   loading: boolean;
   user?: UserProps | null;
 }
 
-interface UserUpdateProps {
-  name: string;
-  email: string;
-  password: string;
-  old_password: string;
-}
+// interface UserUpdateProps {
+//   id?: number;
+//   avatar: any;
+//   name: string;
+//   email: string;
+//   password: string;
+//   old_password: string;
+//   updated_at?: string;
+//   created_at?: string;
+// }
 
 interface UserProps {
-  id: number;
+  id?: number;
   name: string;
   email: string;
   password: string;
-  avatar: string | null;
-  updated_at: string;
-  created_at: string;
+  avatar?: string | null;
+  updated_at?: string;
+  created_at?: string;
 }
 
 interface User {
@@ -70,32 +74,30 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
     }
   }, []);
 
-  async function updateProfile(user: UserUpdateProps, avatarFile?: File | null) {
+  async function updateProfile({ user, avatarFile }: any) {
     try {
       setLoading(true)
       if (!data || !data.user) {
         throw new Error("Sem usuário cadastrado");
       }
 
-      const updatedUser = {
-        ...data.user,
-        ...user,
-      };
-
-      await api.put("/users", updatedUser);
-
       if (avatarFile) {
         const formData = new FormData();
         formData.append("avatar", avatarFile);
         const response = await api.patch("/users/avatar", formData)
 
-        updatedUser.avatar = response.data.avatar;
+        user.avatar = response.data.avatar;
       }
+
+      await api.put("/users", user);
       
 
-      localStorage.setItem("@rocketnotes:user", JSON.stringify(updatedUser));
+      localStorage.setItem("@rocketnotes:user", JSON.stringify(user));
 
-      setData({ user: updatedUser, token: data ? data.token : null });
+      setData({
+        token: data.token,
+        user,
+      })
       toast.success("Perfil atualizado com succeso!");
     } catch (error) {
       if (error instanceof AxiosError && error.response) {

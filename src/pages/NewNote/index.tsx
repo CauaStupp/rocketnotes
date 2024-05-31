@@ -10,13 +10,15 @@ import { useRef, useState } from "react";
 import { api } from "../../services/api";
 import { ToastContainer, toast } from "react-toastify";
 import { ButtonText } from "../../components/ButtonText";
+import { AxiosError } from "axios";
 
 export const NewNote = () => {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
   const [links, setLinks] = useState<string[]>([]);
   const [newLink, setNewLink] = useState("");
+  const [loading, setLoading] = useState(false);
   const inputTags = useRef<HTMLInputElement>(null);
   const inputLinks = useRef<HTMLInputElement>(null);
 
@@ -32,17 +34,17 @@ export const NewNote = () => {
   }
 
   function handleRemoveLink(deleted: string) {
-    setLinks(prev => prev.filter(link => link !== deleted));
+    setLinks((prev) => prev.filter((link) => link !== deleted));
   }
 
   function handleAddTag() {
-    setTags(prev => [...prev, newTag]);
+    setTags((prev) => [...prev, newTag]);
     setNewTag("");
     inputTags.current?.focus();
   }
 
   function handleRemoveTag(deleted: string) {
-    setTags(prev => prev.filter(tag => tag !== deleted));
+    setTags((prev) => prev.filter((tag) => tag !== deleted));
   }
 
   function handleNavigation() {
@@ -50,25 +52,33 @@ export const NewNote = () => {
   }
 
   async function handleNewNote() {
-    if (!title) {
-      return toast.info("Preencha o título para salvar");
+    try {
+      setLoading(true);
+      if (!title) {
+        return toast.info("Preencha o título para salvar");
+      }
+      if (newTag || newLink) {
+        return toast.info("Você deixou algum link ou tag sem adicionar!");
+      }
+
+      await api.post("/notes", {
+        title,
+        description,
+        tags,
+        links,
+      });
+
+      toast.success("Nota criada com sucesso!");
+      setTimeout(() => {
+        navigate(-1);
+      }, 2000);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error("Error: " + error.cause?.message);
+      }
+    } finally {
+      setLoading(false);
     }
-
-    if (newTag || newLink) {
-      return toast.info("Você deixou algum link ou tag sem adicionar!");
-    }
-
-    await api.post("/notes", {
-      title,
-      description,
-      tags,
-      links
-    })
-
-    toast.success("Nota criada com sucesso!");
-    setTimeout(() => {
-      navigate(-1);
-    }, 2000);
   }
 
   return (
@@ -79,24 +89,24 @@ export const NewNote = () => {
         <Form>
           <header>
             <h1>Criar nota</h1>
-            <ButtonText title="voltar" onClick={handleNavigation}/>
+            <ButtonText title="voltar" onClick={handleNavigation} />
           </header>
 
-          <Input 
+          <Input
             placeholder="Título"
             type="text"
             icon={null}
-            onChange={({target}) => setTitle(target.value)}
+            onChange={({ target }) => setTitle(target.value)}
           />
 
-          <InputArea 
+          <InputArea
             placeholder="Observações"
-            onChange={({target}) => setDescription(target.value)}
+            onChange={({ target }) => setDescription(target.value)}
           />
 
           <Section title="Links úteis">
             {links.map((link, index) => (
-              <ItemNote 
+              <ItemNote
                 key={index}
                 value={link}
                 onClick={() => handleRemoveLink(link)}
@@ -121,28 +131,29 @@ export const NewNote = () => {
                   onClick={() => handleRemoveTag(tag)}
                 />
               ))}
-              
-              <ItemNote 
+
+              <ItemNote
                 isNew
                 placeholder="Nova tag"
                 value={newTag}
-                onChange={({target}) => setNewTag(target.value)}
+                onChange={({ target }) => setNewTag(target.value)}
                 onClick={handleAddTag}
                 ref={inputTags}
               />
             </div>
           </Section>
-
-          <Button 
-            title="Salvar" 
-            onClick={handleNewNote}
-          />
+          
+          {loading ? (
+            <Button title="Salvando..." isLoading/>
+          ) : (
+            <Button title="Salvar" onClick={handleNewNote} />
+          )}
         </Form>
       </main>
 
-      <ToastContainer 
+      <ToastContainer
         position="top-center"
-        autoClose={5000} 
+        autoClose={5000}
         hideProgressBar={false}
         newestOnTop={true}
         closeOnClick

@@ -36,7 +36,7 @@ export const Profile = () => {
       old_password: oldPassword,
     };
 
-    await updateProfile(updatedUser, avatarFile);
+    await updateProfile({user: updatedUser, avatarFile});
   }
 
   function handleChangeImage({ target }: { target: HTMLInputElement }) {

@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 export const api = axios.create({
-  baseURL: "https://notes-api-ld9c.onrender.com"
+  baseURL: "https://rocketnotes-api-3rgg.onrender.com"
 })
